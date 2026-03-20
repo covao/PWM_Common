@@ -55,7 +55,9 @@ pwm.PWM(pin=14, freq=50, duty=7.5)
 # Motor forward at 60% speed on GPIO 13
 pwm.PWM(pin=13, freq=490, duty=60.0)
 
-pwm.stop()
+# Stop outputs for the used pins
+pwm.stop(pin=14)
+pwm.stop(pin=13)
 ```
 
 ### Hardware PWM (rpi-hardware-pwm) — GPIO 12/18 (ch0) or 13/19 (ch1)
@@ -71,7 +73,9 @@ pwm.PWM(pin=18, freq=50, duty=7.5)
 # Motor forward at 60% speed on GPIO 19 (Hardware PWM channel 1)
 pwm.PWM(pin=19, freq=490, duty=60.0)
 
-pwm.stop()
+# Stop outputs for the used pins
+pwm.stop(pin=18)
+pwm.stop(pin=19)
 ```
 
 ### Switching between SW/HW at runtime
@@ -83,7 +87,7 @@ USE_HARDWARE_PWM = True  # Change to False for Software PWM
 
 pwm = PWM_Common(use_hardware_pwm=USE_HARDWARE_PWM)
 pwm.PWM(pin=18, freq=50, duty=7.5)
-pwm.stop()
+pwm.stop(pin=18)
 ```
 
 ### API Reference
@@ -105,6 +109,6 @@ PWM_Common.PWM(pin, freq, duty)
 | `duty` | float | Duty cycle 0.0–100.0 (%) |
 
 ```
-PWM_Common.stop()
+PWM_Common.stop(pin)
 ```
-Stops all PWM outputs and releases resources. Call this on shutdown.
+Stops PWM output on the specified `pin`. Call this on shutdown for per-pin cleanup.

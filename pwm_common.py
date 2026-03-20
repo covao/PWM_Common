@@ -11,7 +11,7 @@ class PWM_Common:
 
     # GPIO pin to Hardware PWM channel mapping (BCM numbering)
     # GPIO 18 / 12 -> channel 0,  GPIO 19 / 13 -> channel 1
-    _PIN_TO_CHANNEL = { 12: 0, 13: 1, 18: 2, 19: 3}
+    _PIN_TO_CHANNEL = {18: 2, 12: 0, 19: 3, 13: 1}
 
     def __init__(self, use_hardware_pwm: bool = False):
         """
@@ -61,15 +61,21 @@ class PWM_Common:
 
     def _pwm_software(self, pin: int, freq: float, duty: float) -> None:
         """Drive Software PWM via pigpio."""
-        self._pi.set_PWM_frequency(pin, int(freq))
-        self._pi.set_PWM_range(pin, 10000)               # 10000-step resolution
-        self._pi.set_PWM_dutycycle(pin, int(duty * 100)) # duty% * 100 -> 0..10000
-
-    def stop(self) -> None:
-        """Stop all PWM outputs and release resources."""
-        if self.use_hardware_pwm:
-            for pwm in self._hw_pwm_instances.values():
-                pwm.stop()
-            self._hw_pwm_instances.clear()
+        if freq == 50:
+            # Servo mode: convert duty cycle to pulse width in microseconds
+            pulsewidth = duty / 100.0 * 20000 # Period = 1/50Hz = 20000 µs
+            self._pi.set_servo_pulsewidth(pin, int(pulsewidth))
         else:
-            self._pi.stop()
+            self._pi.set_PWM_frequency(pin, int(freq))
+            self._pi.set_PWM_range(pin, 10000)               # 10000-step resolution
+            self._pi.set_PWM_dutycycle(pin, int(duty * 100)) # duty% * 100 -> 0..10000
+
+    def stop(self, pin: int) -> None:
+        """Stop PWM output on the specified pin."""
+        if self.use_hardware_pwm:
+            pwm = self._hw_pwm_instances.pop(pin, None)
+            if pwm is not None:
+                pwm.stop()
+        else:
+            self._pi.set_servo_pulsewidth(pin, 0)
+            self._pi.set_PWM_dutycycle(pin, 0)

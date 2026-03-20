@@ -16,8 +16,10 @@ A minimal unified PWM interface for Raspberry Pi that switches between Software 
 | Hardware PWM | rpi-hardware-pwm | GPIO 12, 13, 18, 19 only | None |
 
 ## Requirements
+- Raspberry Pi 4, Zero 2 W, or 5
 - Raspberry Pi OS Bookworm or later
-- Raspberry Pi 1–5 (hardware PWM only on Pi 5)
+- pigpio（Software PWM）raspberrypi 4,zero2w 
+- rpi-hardware-pwm（Hardware PWM）raspberrypi 5
 
 ## Installation
 

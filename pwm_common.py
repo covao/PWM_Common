@@ -3,8 +3,10 @@ pwm_common.py
 Unified PWM interface supporting:
   - Software PWM via pigpio
   - Hardware PWM via rpi-hardware-pwm
+Required libraries:
+- pigpio(Software PWM) for raspberrypi-4,zero-2w
+- rpi-hardware-pwm(Hardware PWM) for raspberrypi5
 """
-
 
 class PWM_Common:
     """Unified PWM interface supporting Software PWM (pigpio) and Hardware PWM (rpi-hardware-pwm)."""
@@ -63,7 +65,7 @@ class PWM_Common:
         """Drive Software PWM via pigpio."""
         if freq == 50:
             # Servo mode: convert duty cycle to pulse width in microseconds
-            pulsewidth = duty / 100.0 * 20000 # Period = 1/50Hz = 20000 µs
+            pulsewidth = duty * 200.0 # Period = 1/50Hz = 20000 µs
             self._pi.set_servo_pulsewidth(pin, int(pulsewidth))
         else:
             self._pi.set_PWM_frequency(pin, int(freq))
